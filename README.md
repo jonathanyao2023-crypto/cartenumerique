@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mariage Jean & Anaïs - 14 Fév 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #a67c52; --dark: #2c3e50; --light: #fdfbfb; }
+        body { margin: 0; font-family: 'Lato', sans-serif; color: var(--dark); background-color: var(--light); line-height: 1.6; }
+        
+        /* Hero Section */
+        .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1920&q=80') no-repeat center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 8vw, 5rem); margin-bottom: 0.5rem; }
+        .date-hero { font-size: 1.5rem; letter-spacing: 4px; border-top: 1px solid white; border-bottom: 1px solid white; padding: 10px 20px; }
+
+        .section { padding: 80px 20px; text-align: center; max-width: 900px; margin: auto; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--gold); }
+        
+        /* RSVP Form */
+        .rsvp-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); margin-top: 30px; }
+        input { padding: 15px; margin: 10px; border-radius: 8px; border: 1px solid #ddd; width: 90%; max-width: 400px; font-size: 1rem; }
+        .btn { background: var(--gold); color: white; padding: 15px 40px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
+        .btn:hover { background: #8b6642; transform: translateY(-2px); }
+
+        /* --- ADMIN STYLES --- */
+        #admin-panel { display: none; background: #fff; border-top: 3px solid var(--gold); margin-top: 50px; padding: 50px 20px; border-radius: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fdfbfb; padding: 20px; border-radius: 10px; border: 1px solid #eee; }
+        .stat-card h4 { margin: 0; color: var(--gold); font-size: 2rem; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: var(--gold); color: white; font-weight: 400; }
+        
+        /* Login Trigger (Floating Icon) */
+        .admin-trigger { position: fixed; bottom: 20px; right: 20px; cursor: pointer; opacity: 0.3; transition: 0.3s; z-index: 100; }
+        .admin-trigger:hover { opacity: 1; }
+        
+        /* Login Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background: white; width: 90%; max-width: 400px; margin: 15% auto; padding: 30px; border-radius: 15px; text-align: center; }
+        
+        .map-frame { width: 100%; height: 400px; border-radius: 15px; border: none; filter: grayscale(20%); margin-top: 20px; }
+
+        .btn-outline { background: transparent; border: 1px solid #ccc; color: #777; padding: 8px 15px; font-size: 0.8rem; margin-top: 30px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-trigger" onclick="openLogin()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a67c52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3 style="font-family: 'Playfair Display';">Accès Restreint</h3>
+            <input type="text" id="adminUser" placeholder="Identifiant"><br>
+            <input type="password" id="adminPass" placeholder="Mot de passe"><br><br>
+            <button class="btn" onclick="checkLogin()">Se connecter</button>
+            <p id="loginError" style="color: red; font-size: 0.8rem; display: none; margin-top: 10px;">Identifiants incorrects</p>
+            <button onclick="closeLogin()" style="background:none; border:none; color: gray; cursor:pointer; margin-top: 15px; display: block; width: 100%;">Annuler</button>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Jean & Anaïs</h1>
+        <div class="date-hero">14 FÉVRIER 2026</div>
+        <p style="margin-top: 20px; font-style: italic;">"Où tu iras j'irai..." - Ruth 1:16</p>
+    </div>
+
+    <section class="section">
+        <h2>Lieu & Heure</h2>
+        <p>Nous serons heureux de vous accueillir à <strong>13h00</strong> à la <strong>Mairie de Koumassi</strong>.<br>
+        La fête se poursuivra au <strong>Foyer des Jeunes de Koumassi</strong>.</p>
+        <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.760144577821!2d-3.9439!3d5.2975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMTcnNTEuMCJOIDPCsDU2JzM4LjAiVw!5e0!3m2!1sfr!2sci!4v1625000000000"></iframe>
+    </section>
+
+    <section class="section">
+        <h2>Confirmation</h2>
+        <div class="rsvp-container" id="rsvpBox">
+            <form id="weddingForm">
+                <input type="text" id="guestName" placeholder="Votre nom complet" required><br>
+                <input type="number" id="guestCount" placeholder="Nombre total de personnes" min="1" required><br>
+                <button type="submit" class="btn">Confirmer ma présence</button>
+            </form>
+            <div id="thankYouMsg" style="display:none; color: var(--gold); margin-top: 20px;">
+                <p style="font-size: 1.2rem; font-weight: bold;">Merci !</p>
+                <p>Votre inscription a bien été prise en compte.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="admin-panel" class="section">
+        <h2 style="color: #333;">Tableau de Bord de Gestion</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p>Total Groupes</p>
+                <h4 id="totalGroups">0</h4>
+            </div>
+            <div class="stat-card">
+                <p>Total Invités (Convives)</p>
+                <h4 id="totalPeople">0</h4>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom de l'invité principal</th>
+                    <th>Nombre</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="guestListBody"></tbody>
+        </table>
+        
+        <button class="btn-outline" onclick="clearData()">Réinitialiser la liste complète</button>
+        <button class="btn-outline" onclick="logoutAdmin()" style="color: #e74c3c; border-color: #e74c3c;">Se déconnecter</button>
+    </section>
+
+    <script>
+        // --- LOGIQUE RSVP ---
+        document.getElementById('weddingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('guestName').value;
+            const count = parseInt(document.getElementById('guestCount').value);
+            
+            let guests = JSON.parse(localStorage.getItem('weddingGuests')) || [];
+            guests.push({ id: Date.now(), name, count });
+            localStorage.setItem('weddingGuests', JSON.stringify(guests));
+            
+            document.getElementById('weddingForm').style.display = 'none';
+            document.getElementById('thankYouMsg').style.display = 'block';
+            updateDashboard();
+        });
+
+        // --- LOGIQUE ADMIN ---
+        function openLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function checkLogin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            if(user === "Admin" && pass === "Mariage14") {
+                document.getElementById('admin-panel').style.display = 'block';
+                closeLogin();
+                updateDashboard();
+                // Faire défiler vers le panneau admin
+                document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function updateDashboard() {
+            const guests = JSON.parse(localStorage.getItem('weddingGuests')) || [];
+            const tbody = document.getElementById('guestListBody');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            guests.forEach(g => {
+                const row = `<tr>
+                    <td>${g.name}</td>
+                    <td>${g.count}</td>
+                    <td><span style="cursor:pointer; color:red;" onclick="deleteGuest(${g.id})">✖</span></td>
+                </tr>`;
+                tbody.innerHTML += row;
+                total += g.count;
+            });
+
+            document.getElementById('totalGroups').innerText = guests.length;
+            document.getElementById('totalPeople').innerText = total;
+        }
+
+        function deleteGuest(id) {
+            if(confirm("Supprimer cet invité ?")) {
+                let guests = JSON.parse(localStorage.getItem('weddingGuests')) || [];
+                guests = guests.filter(g => g.id !== id);
+                localStorage.setItem('weddingGuests', JSON.stringify(guests));
+                updateDashboard();
+            }
+        }
+
+        function clearData() {
+            if(confirm("ATTENTION : Voulez-vous vraiment effacer TOUTE la liste des invités ?")) {
+                localStorage.removeItem('weddingGuests');
+                updateDashboard();
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-panel').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
